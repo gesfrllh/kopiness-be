@@ -1,0 +1,44 @@
+type Product {
+  id: ID!
+  name: String!
+  description: String!
+  origin: String!
+  roastLevel: RoastLevel!
+  process: String!
+  flavorNotes: String!
+  price: Int!
+  stock: Int!
+  imageUrl: String
+  createdAt: String!
+  updatedAt: String!
+  createdBy: User!
+}
+
+enum RoastLevel {
+  LIGHT
+  MEDIUM
+  DARK
+}
+
+input CreateProductInput {
+  name: String!
+  description: String!
+  origin: String!
+  roastLevel: RoastLevel!
+  process: String!
+  flavorNotes: String!
+  price: Int!
+  stock: Int!
+  file: Upload!
+}
+
+type Query {
+  products: [Product!]
+  product(id: ID!): Product
+}
+
+type Mutation {
+  createProduct(input: CreateProductInput!): Product!
+  updateProduct(id: String!, input: CreateProductInput!): Product!
+  deleteProduct(id: ID!): Boolean!
+}

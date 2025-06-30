@@ -1,0 +1,5 @@
+scalar Upload
+
+extend type Mutation {
+  uploadProductImage(file: Upload!): String!
+}

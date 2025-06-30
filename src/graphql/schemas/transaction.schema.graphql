@@ -1,0 +1,37 @@
+type TransactionItem {
+  id: ID!
+  quantity: ID!
+  product: Product!
+}
+
+type Transaction {
+  id: ID!
+  total: Int!
+  items: [TransactionItem!]!
+  createdAt: String!
+  createdBy: User!
+}
+
+type Query {
+  transactions: [Transaction!]!
+}
+
+type Mutation{
+  createTransaction(items: [TransactionItemInput!]!): Transaction!
+}
+
+input TransactionItemInput {
+  productId: String!
+  quantity: Int!
+}
+
+enum TransactionStatus {
+  PAID 
+  PENDING
+  CANCELLED
+}
+
+extend type Mutation {
+  cancelTransaction(id: String!): Transaction!
+  payTransaction(id: String!): Transaction!
+}

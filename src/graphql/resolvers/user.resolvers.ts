@@ -1,4 +1,4 @@
-import { User } from "@prisma/client";
+import { User, UserRole } from "@prisma/client";
 import { Context } from "../types/context";
 import { Register, Login } from "../types/user.types";
 import argon2 from 'argon2'
@@ -14,24 +14,26 @@ export const Query = {
 export const Mutation = {
   register: async (
     _: unknown,
-    args: Register,
+    args: { input: Register },
     ctx: Context
   ): Promise<User> => {
+    const { email, password, role, name } = args.input
+
     const exist = await ctx.prisma.user.findUnique({
-      where: { email: args.email }
+      where: { email: email }
     })
 
     if (exist)
       throw new Error('Email already registered')
 
-    const hashed = await argon2.hash(args.password)
+    const hashed = await argon2.hash(password)
 
     return ctx.prisma.user.create({
       data: {
-        name: args.name,
-        email: args.email,
+        name: name,
+        email: email,
         password: hashed,
-        role: args.role
+        role: role as UserRole
       }
     })
   },
@@ -62,6 +64,17 @@ export const Mutation = {
       token,
       user: safeUser as User
     }
-  }
+  },
 
+  logout: async (
+    _: unknown,
+    __: {},
+    ctx: Context): Promise<boolean> => {
+    const authHeader = ctx.req?.headers.authorization;
+    const token = authHeader?.split(' ')[1]
+
+    if (!token) return false
+
+    return true
+  }
 }

@@ -12,7 +12,7 @@ model User {
   name     String
   email    String  @unique
   password String
-  role     String
+  role     UserRole @default(CUSTOMER)
 
   products      Product[]
   transactions  Transaction[]
@@ -64,4 +64,15 @@ enum TransactionStatus{
   PAID
   PENDING
   CANCELLED
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
+model BlacklistedToken {
+  id        String    @id   @default(uuid())
+  token     String    @unique
+  createdAt DateTime  @default(now())
 }

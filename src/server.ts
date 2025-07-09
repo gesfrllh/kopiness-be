@@ -2,9 +2,9 @@ import type { Application } from 'express'
 import express from 'express'
 import { ApolloServer } from 'apollo-server-express'
 import { typeDefs, resolvers } from './graphql'
-import { createContext } from './context'
 import { graphqlUploadExpress } from 'graphql-upload-ts'
 import dotenv from 'dotenv'
+import { AuthMiddleware } from './middleware/auth.middleware'
 
 dotenv.config()
 
@@ -13,7 +13,10 @@ const startServer = async () => {
   const server = new ApolloServer({
     typeDefs,
     resolvers,
-    context: createContext
+    context: async ({ req }) => {
+      const ctx = await AuthMiddleware(req);
+      return ctx
+    }
   })
 
   await server.start()
@@ -21,7 +24,7 @@ const startServer = async () => {
 
   const PORT = process.env.PORT || 8000
   app.listen(PORT, () => {
-    console.log(`Graphql Server ready at http://localhost:${PORT}${server.graphqlPath}` )
+    console.log(`Graphql Server ready at http://localhost:${PORT}${server.graphqlPath}`)
   })
 }
 

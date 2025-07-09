@@ -3,7 +3,7 @@ type User {
   name: String!
   email: String!
   password: String!
-  role: String!
+  role: UserRole!
 }
 
 type Query {
@@ -20,7 +20,19 @@ input LoginInput {
   password: String!
 }
 
+input RegisterInput{
+  name: String!
+  email: String!
+  password: String!
+  role: UserRole!
+}
+
+enum UserRole {
+  ADMIN
+  CUSTOMER
+}
+
 type Mutation {
-  register(name: String!, email: String!, password: String!, role: String!): User!
+  register(input: RegisterInput!): User!
   login(input: LoginInput!): AuthPayload!
 }

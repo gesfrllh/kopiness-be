@@ -35,4 +35,5 @@ enum UserRole {
 type Mutation {
   register(input: RegisterInput!): User!
   login(input: LoginInput!): AuthPayload!
+  logout: Boolean!
 }

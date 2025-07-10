@@ -5,6 +5,7 @@ import { typeDefs, resolvers } from './graphql'
 import { graphqlUploadExpress } from 'graphql-upload-ts'
 import dotenv from 'dotenv'
 import { AuthMiddleware } from './middleware/auth.middleware'
+import { GraphQLError, GraphQLFormattedError } from 'graphql'
 
 dotenv.config()
 
@@ -16,6 +17,17 @@ const startServer = async () => {
     context: async ({ req }) => {
       const ctx = await AuthMiddleware(req);
       return ctx
+    },
+    formatError: (err: GraphQLError): GraphQLFormattedError => {
+      if (err.message === 'Invalid credentials') {
+        return {
+          message: err.message,
+          extensions: {
+            code: 'UNAUTHENTICATED'
+          }
+        }
+      }
+      return err
     }
   })
 
